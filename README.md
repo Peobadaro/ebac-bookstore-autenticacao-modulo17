@@ -60,3 +60,23 @@ As listas voltam com `count`, `next`, `previous` e `results` (5 itens por págin
 ## Django Debug Toolbar
 
 Instalado como dependência de desenvolvimento. Com `DEBUG = True`, a barra aparece ao abrir a API no navegador em `127.0.0.1` e mostra quantas queries SQL cada requisição fez, o tempo, o cache e outros painéis. Ela fica desligada durante os testes.
+
+## Autenticação por Token
+
+- **Produtos e categorias** continuam abertos: qualquer pessoa pode ver a lista e os detalhes.
+- **Pedidos** (`OrderViewSet`) exigem login com `TokenAuthentication` + `IsAuthenticated`. Cada usuário só vê, altera e apaga os próprios pedidos, e um pedido novo sempre fica no nome de quem está autenticado.
+
+Gerar o token do usuário:
+
+```bash
+curl -X POST -d "username=SEU_USUARIO&password=SUA_SENHA" http://127.0.0.1:8000/api-token-auth/
+# {"token": "..."}
+```
+
+Usar o token nas chamadas de pedido:
+
+```bash
+curl -H "Authorization: Token SEU_TOKEN" http://127.0.0.1:8000/bookstore/v1/order/
+```
+
+Sem token a API responde **401**.

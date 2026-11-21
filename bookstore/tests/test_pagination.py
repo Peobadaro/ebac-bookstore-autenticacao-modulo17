@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.urls import reverse
 from rest_framework import status
+from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
 
 from order.models import Order
@@ -17,6 +18,8 @@ class PaginationTest(APITestCase):
             Category.objects.create(title=f"Categoria {i}", slug=f"categoria-{i}")
             Product.objects.create(title=f"Livro {i}", price=10 + i)
         user = User.objects.create_user(username="pedro", password="senha-teste-123")
+        token = Token.objects.create(user=user)
+        self.client.credentials(HTTP_AUTHORIZATION=f"Token {token.key}")
         product = Product.objects.first()
         for _ in range(7):
             order = Order.objects.create(user=user)
